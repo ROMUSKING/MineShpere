@@ -1,0 +1,126 @@
+{
+  "entities": [
+    {
+      "id": "module:main",
+      "type": "Module",
+      "name": "main",
+      "description": "The main entry point and module for the Bevy Sphere Sweeper game.",
+      "attributes": { "path": "src/main.rs", "language": "Rust" }
+    },
+    {
+      "id": "app:MineSphere",
+      "type": "Component",
+      "name": "MineSphere App",
+      "description": "The Bevy Application instance configuration."
+    },
+    {
+      "id": "resource:GameSession",
+      "type": "Resource",
+      "name": "GameSession",
+      "description": "Tracks the current game state including mines, flags, and timer.",
+      "attributes": { "visibility": "pub" }
+    },
+    {
+      "id": "state:AppState",
+      "type": "Enum",
+      "name": "AppState",
+      "description": "Game states: Playing, GameOver, Victory."
+    },
+    {
+      "id": "component:Cell",
+      "type": "Component",
+      "name": "Cell",
+      "description": "Represents a single hexagonal cell on the sphere.",
+      "attributes": { "path": "src/main.rs" }
+    },
+    {
+      "id": "component:CellVisuals",
+      "type": "Component",
+      "name": "CellVisuals",
+      "description": "Stores material handles for different cell states.",
+      "attributes": { "path": "src/main.rs" }
+    },
+    {
+      "id": "event:RevealCell",
+      "type": "Event",
+      "name": "RevealCell",
+      "description": "Event triggered to reveal a specific cell."
+    },
+    {
+      "id": "event:ChordCell",
+      "type": "Event",
+      "name": "ChordCell",
+      "description": "Event triggered to chord (auto-reveal neighbors) a cell."
+    },
+    {
+      "id": "system:setup_scene",
+      "type": "System",
+      "name": "setup_scene",
+      "description": "Initializes the 3D camera and lighting."
+    },
+    {
+      "id": "system:setup_ui",
+      "type": "System",
+      "name": "setup_ui",
+      "description": "Initializes the HUD text and instructions."
+    },
+    {
+      "id": "system:generate_board",
+      "type": "System",
+      "name": "generate_board",
+      "description": "Generates the Goldberg polyhedron mesh and initializes cell entities."
+    },
+    {
+      "id": "system:on_cell_click",
+      "type": "System",
+      "name": "on_cell_click",
+      "description": "Observer system handling mouse clicks on cells (Reveal, Flag, Chord)."
+    },
+    {
+      "id": "system:process_reveal_queue",
+      "type": "System",
+      "name": "process_reveal_queue",
+      "description": "Processes reveal events, handles flood fill, and checks for mines."
+    },
+    {
+      "id": "system:camera_orbit_controls",
+      "type": "System",
+      "name": "camera_orbit_controls",
+      "description": "Handles camera rotation and zooming."
+    },
+    {
+      "id": "system:update_hud",
+      "type": "System",
+      "name": "update_hud",
+      "description": "Updates the UI text with mine count and timer."
+    },
+    {
+      "id": "system:check_win_condition",
+      "type": "System",
+      "name": "check_win_condition",
+      "description": "Checks if all safe cells have been revealed."
+    },
+    {
+      "id": "system:reveal_all_mines",
+      "type": "System",
+      "name": "reveal_all_mines",
+      "description": "Reveals all mines when the game is over."
+    }
+  ],
+  "relationships": [
+    { "sourceId": "module:main", "targetId": "app:MineSphere", "type": "contains" },
+    { "sourceId": "app:MineSphere", "targetId": "resource:GameSession", "type": "implements" },
+    { "sourceId": "app:MineSphere", "targetId": "state:AppState", "type": "uses" },
+    { "sourceId": "system:generate_board", "targetId": "component:Cell", "type": "writes" },
+    { "sourceId": "system:generate_board", "targetId": "component:CellVisuals", "type": "uses" },
+    { "sourceId": "system:on_cell_click", "targetId": "event:RevealCell", "type": "writes" },
+    { "sourceId": "system:on_cell_click", "targetId": "event:ChordCell", "type": "writes" },
+    { "sourceId": "system:on_cell_click", "targetId": "component:Cell", "type": "reads" },
+    { "sourceId": "system:process_reveal_queue", "targetId": "event:RevealCell", "type": "observes" },
+    { "sourceId": "system:process_reveal_queue", "targetId": "component:Cell", "type": "writes" },
+    { "sourceId": "system:process_reveal_queue", "targetId": "resource:GameSession", "type": "writes" },
+    { "sourceId": "system:update_hud", "targetId": "resource:GameSession", "type": "reads" },
+    { "sourceId": "system:check_win_condition", "targetId": "resource:GameSession", "type": "reads" },
+    { "sourceId": "system:reveal_all_mines", "targetId": "component:CellVisuals", "type": "reads" }
+  ]
+}

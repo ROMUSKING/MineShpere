@@ -1,0 +1,8 @@
+[package]
+name = "bevy_sphere_sweeper"
+version = "0.5.0"
+edition = "2021"
+
+[dependencies]
+bevy = "0.16"
+rand = "0.8"

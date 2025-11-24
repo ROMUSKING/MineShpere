@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project Knowledge Graph",
+  "type": "object",
+  "properties": {
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string", "enum": ["Module", "Service", "Component", "Feature", "File", "Struct", "Enum", "System", "Resource", "Event"] },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "path": { "type": "string" },
+              "language": { "type": "string" },
+              "visibility": { "type": "string" }
+            }
+          }
+        },
+        "required": ["id", "type", "name"]
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sourceId": { "type": "string" },
+          "targetId": { "type": "string" },
+          "type": { "type": "string", "enum": ["depends_on", "implements", "uses", "contains", "observes", "reads", "writes"] }
+        },
+        "required": ["sourceId", "targetId", "type"]
+      }
+    }
+  },
+  "required": ["entities", "relationships"]
+}
