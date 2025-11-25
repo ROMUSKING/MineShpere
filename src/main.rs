@@ -304,6 +304,7 @@ fn spawn_board(
     let subdivisions = if session.level < 3 { 2 } else if session.level < 6 { 3 } else { 4 };
     let (polygons, adjacency) = generate_goldberg_polyhedron(radius, subdivisions);
     session.total_cells = polygons.len();
+    info!("Level: {}, Radius: {:.1}, Subdivisions: {}, Cells: {}", session.level, radius, subdivisions, session.total_cells);
 
     for (idx, poly) in polygons.iter().enumerate() {
         let mesh = create_polygon_mesh(poly);
@@ -663,17 +664,28 @@ fn camera_orbit_controls(
     if let Ok(mut transform) = q_cam.single_mut() {
         if mouse.pressed(MouseButton::Right) {
             for ev in motion.read() {
-                let delta = ev.delta * 0.002; // Slower rotation
+                let delta = ev.delta * 0.002;
                 
-                // Yaw: Rotate around Global Y
-                let q_yaw = Quat::from_rotation_y(-delta.x);
-                transform.rotate_around(Vec3::ZERO, q_yaw);
-
-                // Pitch: Rotate around Local X (Right vector)
-                let right = *transform.right(); 
+                // Trackball / Free Orbit:
+                // Rotate around Camera's Local Up and Right vectors to avoid Gimbal lock at poles.
+                let right = *transform.right();
+                let up = *transform.up();
+                
                 let y_mult = if settings.invert_y { -1.0 } else { 1.0 };
+                
+                // Yaw: Rotate around Camera Up
+                let q_yaw = Quat::from_axis_angle(up, -delta.x);
+                
+                // Pitch: Rotate around Camera Right
                 let q_pitch = Quat::from_axis_angle(right, -delta.y * y_mult);
-                transform.rotate_around(Vec3::ZERO, q_pitch);
+                
+                let rotation = q_yaw * q_pitch;
+                
+                // Apply rotation to position (orbit around center)
+                transform.translation = rotation * transform.translation;
+                
+                // Apply rotation to camera orientation (look at center)
+                transform.rotate(rotation);
             }
         }
 
