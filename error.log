@@ -1,0 +1,13 @@
+    Checking bevy_sphere_sweeper v0.5.0 (C:\Users\romus\MineShpere)
+error: unexpected closing delimiter: `}`
+   --> src\render.rs:153:1
+    |
+148 | pub fn cleanup_ui(mut commands: Commands, q_ui: Query<Entity, With<GameUi>>) {
+    |                                                                              - this opening brace...
+...
+152 | }
+    | - ...matches this closing brace
+153 | }
+    | ^ unexpected closing delimiter
+
+error: could not compile `bevy_sphere_sweeper` (bin "bevy_sphere_sweeper") due to 1 previous error
